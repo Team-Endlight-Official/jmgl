@@ -1,8 +1,10 @@
 package com.endlight.samples;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import com.jmgl.windowing.Display;
+import com.jmgl.windowing.Keyboard;
 
 public class Sample0
 {
@@ -30,8 +32,11 @@ public class Sample0
 		GL11.glClearColor(0.3f, 0.6f, 0.8f, 1.0f);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		
+		float moveX = 0f;
+		float moveY = 0f;
+		
 		while (!Display.isCloseRequested())
-		{
+		{	
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			
 			// Perspective
@@ -40,9 +45,12 @@ public class Sample0
 			GL11.glLoadIdentity();
 			setPerspective(45.0f, Display.getAspectRatio(), 0.1f, 100f);
 			
+			moveX += 0.05f * Keyboard.getKeyAxis(GLFW.GLFW_KEY_A, GLFW.GLFW_KEY_D);
+			moveY += 0.05f * Keyboard.getKeyAxis(GLFW.GLFW_KEY_S, GLFW.GLFW_KEY_W);
+			
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			GL11.glLoadIdentity();
-			GL11.glTranslatef(0, 0, -2);
+			GL11.glTranslatef(moveX, moveY, -2);
 			
 			// MESH
 			GL11.glBegin(GL11.GL_QUADS);

@@ -38,6 +38,7 @@ public final class Display
 	
 	// Display Callbacks
 	private static DisplayResize displayResizeListener;
+	private static DisplayKeyInput displayKeyInputListener;
 	
 	// GLFW Window
 	private static long windowPtr;
@@ -159,6 +160,12 @@ public final class Display
 		System.out.println("Display: OnDisplayResize Listener has been hooked up!");
 	}
 	
+	public static void setKeyInputListener(DisplayKeyInput listener)
+	{
+		displayKeyInputListener = listener;
+		System.out.println("Display: OnDisplayKeyInput Listener has been hooked up!");
+	}
+	
 	public static void setGLProfile(int major, int minor, int profile)
 	{
 		glMajor = major;
@@ -223,11 +230,14 @@ public final class Display
         });
         
         GLFW.glfwSetKeyCallback(windowPtr, (window, key, scanCode, action, mods) ->
-        {
+        {	
             if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS)
             {
                 close();
             }
+            
+            if (displayKeyInputListener != null)
+            	displayKeyInputListener.OnDisplayKeyInput(key, scanCode, action, mods);
         });
         
         GLFW.glfwMakeContextCurrent(windowPtr);
