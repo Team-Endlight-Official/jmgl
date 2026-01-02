@@ -31,6 +31,7 @@ public class Sample0
 	{
 		Display.setTitle("Best Title Ever!");
 		Display.setSize(800, 600);
+		Display.setGLProfile(3, 3, Display.PROFILE_COMPAT);
 		Display.setForwardCompat(false);
 		Display.setResizable(true);
 		Display.enableVSync(true);
@@ -44,7 +45,7 @@ public class Sample0
 		Display.create(false);
 		
 		// Some Display methods have to be called after create because on some methods the window must exist for them to take effect.
-		Display.setMinimumSize(800, 600);
+		Display.setMinimumSize(640, 480);
 		
 		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		GL11.glClearColor(0.3f, 0.6f, 0.8f, 1.0f);
