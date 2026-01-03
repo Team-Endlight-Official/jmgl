@@ -5,13 +5,13 @@ import org.lwjgl.glfw.GLFW;
 public final class Keyboard
 {
 	// Key consts
-	public static final int KEYS_ALL = GLFW.GLFW_KEY_MENU;
+	public static final int KEYS_ALL = GLFW.GLFW_KEY_LAST + 1;
 	
 	// Keyboard status
 	private static boolean exists = false;
 	private static boolean[] pressed = new boolean[KEYS_ALL];
 	
-	public static void init()
+	private static void init()
 	{
 		if (exists)
 		{

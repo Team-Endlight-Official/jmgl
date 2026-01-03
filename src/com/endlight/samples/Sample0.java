@@ -5,9 +5,13 @@ import org.lwjgl.opengl.GL11;
 
 import com.jmgl.windowing.Display;
 import com.jmgl.windowing.Keyboard;
+import com.jmgl.windowing.Mouse;
 
 public class Sample0
-{
+{	
+	static float moveX = 0f;
+	static float moveY = 0f;
+	
 	public static void main(String[] args)
 	{
 		Display.setTitle("Best Title Ever!");
@@ -27,17 +31,25 @@ public class Sample0
 		
 		// Some Display methods have to be called after create because on some methods the window must exist for them to take effect.
 		Display.setMinimumSize(640, 480);
+		Mouse.grabCursor(true);
 		
 		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		GL11.glClearColor(0.3f, 0.6f, 0.8f, 1.0f);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		
-		float moveX = 0f;
-		float moveY = 0f;
-		
 		while (!Display.isCloseRequested())
-		{	
+		{
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+			
+			Display.setTitle("Best Title Ever! X: " + Mouse.getX() + "; Y: " + Mouse.getY());
+			
+			if (Mouse.isButtonDown(Mouse.BUTTONS_LEFT))
+			{
+				System.out.println("Click!");
+			}
+			
+			moveX += 0.05f * Keyboard.getKeyAxis(GLFW.GLFW_KEY_A, GLFW.GLFW_KEY_D);
+			moveY += 0.05f * Keyboard.getKeyAxis(GLFW.GLFW_KEY_S, GLFW.GLFW_KEY_W);
 			
 			// Perspective
 			
@@ -45,26 +57,23 @@ public class Sample0
 			GL11.glLoadIdentity();
 			setPerspective(45.0f, Display.getAspectRatio(), 0.1f, 100f);
 			
-			moveX += 0.05f * Keyboard.getKeyAxis(GLFW.GLFW_KEY_A, GLFW.GLFW_KEY_D);
-			moveY += 0.05f * Keyboard.getKeyAxis(GLFW.GLFW_KEY_S, GLFW.GLFW_KEY_W);
-			
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			GL11.glLoadIdentity();
-			GL11.glTranslatef(moveX, moveY, -2);
+			GL11.glTranslatef(moveX, moveY, -6);
 			
 			// MESH
 			GL11.glBegin(GL11.GL_QUADS);
 			
-			GL11.glColor3f(1.0f, 0.0f, 0.0f);
+			GL11.glColor3f(1.0f, 0.5f, 0.5f);
 			GL11.glVertex2f(-0.5f, -0.5f);
 			
-			GL11.glColor3f(0.0f, 1.0f, 0.0f);
+			GL11.glColor3f(0.5f, 1.0f, 0.5f);
 			GL11.glVertex2f(-0.5f, 0.5f);
 			
-			GL11.glColor3f(0.0f, 0.0f, 1.0f);
+			GL11.glColor3f(0.5f, 0.5f, 1.0f);
 			GL11.glVertex2f(0.5f, 0.5f);
 			
-			GL11.glColor3f(1.0f, 1.0f, 1.0f);
+			GL11.glColor3f(0.5f, 0.5f, 1.0f);
 			GL11.glVertex2f(0.5f, -0.5f);
 			
 			GL11.glEnd();
@@ -74,6 +83,7 @@ public class Sample0
 		
 		Display.destroy();
 	}
+	
 	
 	public static void setPerspective(float fov, float aspect, float near, float far)
 	{

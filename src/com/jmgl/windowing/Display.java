@@ -37,8 +37,10 @@ public final class Display
 	private static int maxHeight = GLFW.GLFW_DONT_CARE;
 	
 	// Display Callbacks
-	private static DisplayResize displayResizeListener;
-	private static DisplayKeyInput displayKeyInputListener;
+	private static DisplayResizeListener displayResizeListener;
+	private static DisplayKeyListener displayKeyListener;
+	private static DisplayMousePosListener displayMousePosListener;
+	private static DisplayMouseButtonListener displayMouseButtonListener;
 	
 	// GLFW Window
 	private static long windowPtr;
@@ -154,16 +156,28 @@ public final class Display
 	 * Allows for simple setup for the OnFramebufferResizeCallback via interface.
 	 * @param listener your specified listener!
 	 */
-	public static void setResizeListener(DisplayResize listener)
+	public static void setResizeListener(DisplayResizeListener listener)
 	{
 		displayResizeListener = listener;
 		System.out.println("Display: OnDisplayResize Listener has been hooked up!");
 	}
 	
-	public static void setKeyInputListener(DisplayKeyInput listener)
+	public static void setKeyInputListener(DisplayKeyListener listener)
 	{
-		displayKeyInputListener = listener;
+		displayKeyListener = listener;
 		System.out.println("Display: OnDisplayKeyInput Listener has been hooked up!");
+	}
+	
+	public static void setMousePosListener(DisplayMousePosListener listener)
+	{
+		displayMousePosListener = listener;
+		System.out.println("Display: OnCursor Listener has been hooked up!");
+	}
+	
+	public static void setMouseButtonListener(DisplayMouseButtonListener listener)
+	{
+		displayMouseButtonListener = listener;
+		System.out.println("Display: OnMouseButton Listener has been hooked up!");
 	}
 	
 	public static void setGLProfile(int major, int minor, int profile)
@@ -226,7 +240,19 @@ public final class Display
             Display.height = height;
             
             if (displayResizeListener != null)
-            	displayResizeListener.OnDisplayResize(width, height);
+            	displayResizeListener.onDisplayResize(width, height);
+        });
+        
+        GLFW.glfwSetCursorPosCallback(windowPtr, (window, xpos, ypos) -> 
+        {
+        	if (displayMousePosListener != null)
+        		displayMousePosListener.onDisplayMousePos(xpos, ypos);
+        });
+        
+        GLFW.glfwSetMouseButtonCallback(windowPtr, (window, button, action, mods) -> 
+        {
+        	if (displayMouseButtonListener != null)
+        		displayMouseButtonListener.onDisplayMouseButton(button, action, mods);
         });
         
         GLFW.glfwSetKeyCallback(windowPtr, (window, key, scanCode, action, mods) ->
@@ -236,8 +262,8 @@ public final class Display
                 close();
             }
             
-            if (displayKeyInputListener != null)
-            	displayKeyInputListener.OnDisplayKeyInput(key, scanCode, action, mods);
+            if (displayKeyListener != null)
+            	displayKeyListener.onDisplayKey(key, scanCode, action, mods);
         });
         
         GLFW.glfwMakeContextCurrent(windowPtr);
@@ -263,9 +289,16 @@ public final class Display
 		
 		GLFW.glfwSetErrorCallback(null);
 		GLFW.glfwSetKeyCallback(windowPtr, null);
+		GLFW.glfwSetCursorPosCallback(windowPtr, null);
+		GLFW.glfwSetMouseButtonCallback(windowPtr, null);
+		GLFW.glfwSetFramebufferSizeCallback(windowPtr, null);
 		
 		GLFW.glfwDestroyWindow(windowPtr);
         GLFW.glfwTerminate();
+        
+        windowPtr = NULL;
+        
+        System.out.println("Display has been closed and terminated!");
 	}
 	
 	public static void checkExists()
@@ -278,13 +311,13 @@ public final class Display
 	
 	public static void pollEvents()
 	{
-		checkExists();
+		if (!exists()) return;
 		GLFW.glfwPollEvents();
 	}
 	
 	public static void swapBuffers()
 	{
-		checkExists();
+		if (!exists()) return;
 		GLFW.glfwSwapBuffers(windowPtr);
 	}
 	
@@ -304,6 +337,7 @@ public final class Display
 	
 	public static boolean isCloseRequested()
 	{
+		if (!exists) return true;
 		return GLFW.glfwWindowShouldClose(windowPtr);
 	}
 	
@@ -331,5 +365,11 @@ public final class Display
 	{
 		checkExists();
 		return primaryMode;
+	}
+	
+	public static long ptrWindow()
+	{
+		checkExists();
+		return windowPtr;
 	}
 }

@@ -3,7 +3,7 @@ package com.jmgl.windowing;
 /**
  * Interface callback for when the Display gets resized!
  */
-public interface DisplayResize
+public interface DisplayResizeListener
 {
-	public void OnDisplayResize(int width, int height);
+	public void onDisplayResize(int width, int height);
 }
