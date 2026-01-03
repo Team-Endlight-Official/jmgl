@@ -13,8 +13,14 @@ jModernGL or jmgl for short is a thin wrapper for LWJGL3 by making it feel and l
 # Roadmap
 
 # Setup (Eclipse)
+Requirements:
+- Java SE 21 or later.
+- Eclipse IDE installed.
 
 # Setup (IntelliJ IDEA)
+Requirements:
+- Java SE 21 or later.
+- IntelliJ IDEA installed.
 
 # 📌 Getting started
 Here is a sample code that draws a quad with a projection matrix using immediate GL.
